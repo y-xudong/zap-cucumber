@@ -42,8 +42,9 @@ public class Stepdefs {
             CloseableHttpClient httpClient = HttpClients.createDefault();
             HttpGet httpGet = new HttpGet(String.format("http://%s:%d", ZAP_ADDRESS.replaceAll("(.*)/$", "$1"), ZAP_PORT));
             try {
-                CloseableHttpResponse httpResponse = httpClient.execute(httpGet);
-                statusCode = httpResponse.getStatusLine().getStatusCode();
+                try (CloseableHttpResponse httpResponse = httpClient.execute(httpGet)) {
+                    statusCode = httpResponse.getStatusLine().getStatusCode();
+                }
             } catch (ConnectException e) {
                 // ignore
             }
@@ -83,7 +84,6 @@ public class Stepdefs {
     @Then("produce HTML report")
     public void produceHTMLReport() throws IOException, ClientApiException {
         String htmlReportContent = new String(clientApi.core.htmlreport(), StandardCharsets.UTF_8);
-
         File reportDirectory = new File(REPORT_DIRECTORY_PATH.toString());
         if (!reportDirectory.exists()) {
             boolean successfullyCreated = reportDirectory.mkdirs();
