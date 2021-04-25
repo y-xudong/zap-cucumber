@@ -13,4 +13,22 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     implementation group: 'org.zaproxy', name: 'zap-clientapi', version: '1.9.0'
     implementation group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.13'
+    testImplementation group: 'io.cucumber', name: 'cucumber-java', version: '6.10.3'
+}
+
+configurations {
+    cucumberRuntime {
+        extendsFrom testImplementation
+    }
+}
+
+task cucumber() {
+    dependsOn assemble, testClasses
+    doLast {
+        javaexec {
+            main = "io.cucumber.core.cli.Main"
+            classpath = configurations.cucumberRuntime + sourceSets.main.output + sourceSets.test.output
+            args = ['--plugin', 'pretty', 'src/test/resources']
+        }
+    }
 }
