@@ -25,7 +25,7 @@ public class Example {
     private static final Path REPORT_DIRECTORY_PATH = Paths.get(System.getProperty("user.dir"), "reports");
     private static final Path HTML_REPORT_PATH = REPORT_DIRECTORY_PATH.resolve("html_report.html");
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws ClientApiException {
         ClientApi clientApi = new ClientApi(ZAP_ADDRESS, ZAP_PORT, ZAP_API_KEY);
 
         try {
@@ -82,10 +82,12 @@ public class Example {
             writer.close();
             System.out.printf("HTML report: %s%s%n", System.getProperty("user.dir"), HTML_REPORT_PATH.toString());
 
-            clientApi.core.shutdown();
-            System.out.println("ZAP has been shut down");
         } catch (ClientApiException | InterruptedException | IOException e) {
             e.printStackTrace();
+
+        } finally {
+            clientApi.core.shutdown();
+            System.out.println("ZAP has been shut down");
         }
     }
 }
